@@ -5,22 +5,25 @@ import bcrypt
 SECRET_KEY = "meu_top_secret"
 ALGORITHM = "HS256"
 
-def create_token(data: dict, expires_delta: timedelta):
+def create_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.now() + expires_delta
-    to_encode.update({"exp": expire})
+    # expire = datetime.now() + expires_delta
+    # to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY,
                       algorithm=ALGORITHM)
 
 
 def verify_token(token: str):
     try:
+        print(token)
         payload = jwt.decode(token, SECRET_KEY,
                             algorithm = ALGORITHM)
         return payload
     except jwt.ExpiredSignatureError:
+        print("erro assinatura")
         return None
     except jwt.InvalidTokenError:
+        print("erro token inválido")
         return None
     
 def hash_password(password: str) -> str:
