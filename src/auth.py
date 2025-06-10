@@ -1,10 +1,13 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 import bcrypt
-from fastapi import HTTPException, Header
+from fastapi import HTTPException, Security 
+from fastapi.security import APIKeyHeader
 
 SECRET_KEY = "meu_top_secret"
 ALGORITHM = "HS256"
+
+api_key_header = APIKeyHeader(name="Authorization")
 
 def create_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
@@ -26,7 +29,8 @@ def verify_token(token: str):
         raise HTTPException(status_code=401, detail="Token inválido")
     
 
-def get_current_user(authorization: str = Header(None)):
+def get_current_user(authorization: str = Security(api_key_header)):
+    print(authorization)
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Token JWT não fornecido corretamente")
     
