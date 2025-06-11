@@ -65,3 +65,8 @@ def create_post(
     db.commit()
 
     return {"msg": "Post criado com sucesso"}
+
+@app.get("/posts/")
+def get_all_posts(db: Session = Depends(get_db)):
+    posts = db.query(Post).all()
+    return posts
