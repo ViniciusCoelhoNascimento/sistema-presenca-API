@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
+from fastapi.middleware.cors import CORSMiddleware
 from models import Aulas, Professores, Turmas
 import schemas
 import auth
@@ -8,11 +9,20 @@ import auth
 # Importa os modelos para que o SQLAlchemy os conheça
 from models import Base
 
+
 # Cria as tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+# Configuração do CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Ou ["*"] para permitir qualquer origem
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 def get_db():
     db = SessionLocal()
     try:
@@ -54,7 +64,8 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
         #Cria o token JWT para o usuário recém criado
     token = auth.create_token({"sub": db_user.username},
                 expires_delta=auth.timedelta(hours=2))
-    return {"acess_token": token}
+    return {"acess_token": token,
+            "user_id": db_user.id}
 
 @app.post("/create-aula/")
 def create_post(
@@ -67,7 +78,7 @@ def create_post(
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
     # Cria a nova aula
-    db_aula = models.Aulas(
+    db_aula = Aulas(
         descricao=aula.descricao,
         id_professor=aula.id_professor
     )
@@ -89,10 +100,10 @@ def create_post(
     if not db_user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    db_turma = models.Turmas(
-        descricao=turma.nome_aluno,
+    db_turma = Turmas(
+        nome_aluno=turma.nome_aluno,
         presenca=turma.presenca,
-        id_professor=turma.id_aula
+        id_aula=turma.id_aula
     )
     
     db.add(db_turma)
