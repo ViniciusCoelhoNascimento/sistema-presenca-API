@@ -15,11 +15,11 @@ class Aulas(Base):
     __tablename__ = "aulas"
     id = Column(Integer, primary_key= True, index=True)
     descricao = Column(String)
-    id_professor = Column(Integer, ForeignKey("Professores.id"))
+    id_professor = Column(Integer, ForeignKey("professores.id"))
 
 class Turmas(Base):
     __tablename__ = "turmas"
     id = Column(Integer, primary_key=True, index=True)
     nome_aluno = Column(String)
     presenca = Column(Boolean)
-    id_aula = Column(Integer, ForeignKey("Aulas.id"))
+    id_aula = Column(Integer, ForeignKey("aulas.id"))

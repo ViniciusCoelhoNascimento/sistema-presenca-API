@@ -1,9 +1,15 @@
-from fastapi import FastAPI, Depends, HTTPException, Header
+from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import SessionLocal
-import auth
-import schemas
+from database import SessionLocal, engine, Base
 from models import Aulas, Professores, Turmas
+import schemas
+import auth
+
+# Importa os modelos para que o SQLAlchemy os conheça
+from models import Base
+
+# Cria as tabelas no banco de dados
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
