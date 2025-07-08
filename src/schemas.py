@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 import datetime
 
-class AuthorCreate(BaseModel):
+class ProfessorCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
@@ -10,13 +10,16 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
-class PostCreate(BaseModel):
-    title: str
-    text: str
-    date: datetime.datetime = datetime.datetime.now
+class CreateAula(BaseModel):
+    descricao: str
+    id_professor: int
 
-class CommentCreate(BaseModel):
-    post_id: int
-    title: str
-    text: str
-    date: datetime.datetime = datetime.datetime.now
+class CreateTurma(BaseModel):
+    nome_aluno: str
+    presenca: bool
+    id_aula: int
+
+class UpdatePresenca(BaseModel):
+    id_aula: int
+    nome_aluno: str
+    presenca: bool
